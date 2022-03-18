@@ -34,7 +34,7 @@ use std::path::Path;
 
 const DOWNLOAD_BASE_URL: &'static str = "https://download.libsodium.org/libsodium/releases/";
 const FALLBACK_BASE_URL: &'static str = "https://s3.amazonaws.com/libsodium/";
-const VERSION: &'static str = "1.0.18";
+const VERSION: &'static str = "1.0.17";
 
 #[cfg(target_env = "msvc")] // libsodium-<VERSION>-msvc.zip
 const SHA256: &'static str = "f0f32ad8ebd76eee99bb039f843f583f2babca5288a8c26a7261db9694c11467";
