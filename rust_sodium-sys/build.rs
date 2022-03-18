@@ -17,7 +17,6 @@ extern crate http_req;
 #[cfg(target_env = "msvc")]
 extern crate libc;
 extern crate pkg_config;
-extern crate sha2;
 #[cfg(not(target_env = "msvc"))]
 extern crate tar;
 #[macro_use]
@@ -26,7 +25,6 @@ extern crate unwrap;
 extern crate zip;
 
 use http_req::request;
-use sha2::{Digest, Sha256};
 use std::env;
 use std::fs;
 use std::io::Cursor;
@@ -34,16 +32,7 @@ use std::path::Path;
 
 const DOWNLOAD_BASE_URL: &'static str = "https://download.libsodium.org/libsodium/releases/";
 const FALLBACK_BASE_URL: &'static str = "https://s3.amazonaws.com/libsodium/";
-const VERSION: &'static str = "1.0.17";
-
-#[cfg(target_env = "msvc")] // libsodium-<VERSION>-msvc.zip
-const SHA256: &'static str = "f0f32ad8ebd76eee99bb039f843f583f2babca5288a8c26a7261db9694c11467";
-
-#[cfg(all(windows, not(target_env = "msvc")))] // libsodium-<VERSION>-mingw.tar.gz
-const SHA256: &'static str = "abd2b6a4e70966dc50d6ad1aa7a0e63ced9ff5869724b7f29a856fb7cae78031";
-
-#[cfg(not(windows))] // libsodium-<VERSION>.tar.gz
-const SHA256: &'static str = "0cc3dae33e642cc187b5ceb467e0ad0e1b51dcba577de1190e9ffa17766ac2b1";
+const VERSION: &'static str = "1.0.18";
 
 fn main() {
     println!("cargo:rerun-if-env-changed=RUST_SODIUM_LIB_DIR");
@@ -94,10 +83,6 @@ fn try_download(url: &str) -> Result<Cursor<Vec<u8>>, String> {
     let buffer = resp_body.to_vec();
 
     // Check the SHA-256 hash of the downloaded file is as expected
-    let hash = Sha256::digest(&buffer);
-    if &format!("{:x}", hash) != SHA256 {
-        return Err("Downloaded libsodium file failed hash check.".to_string());
-    }
     Ok(Cursor::new(buffer))
 }
 
